@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./timesheets
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./timesheets_main/:/usr/src/timesheets/  # Mount the main app
+      - ./api/:/usr/src/api/                    # Mount the 'api' app
+      - ./users/:/usr/src/users/                # Mount the 'users' app
+      - ./reports/:/usr/src/reports/            # Mount the 'reports' app
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
