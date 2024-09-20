@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 # class CustomUserManager(BaseUserManager):
 #     def create_user(self, email, password=None, **extra_fields):
 #         if not email:
@@ -24,11 +25,12 @@ logger = logging.getLogger(__name__)
 #             raise ValueError('Superuser must have is_superuser=True.')
 
 #         return self.create_user(email, password, **extra_fields)
-    
+
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     is_approved = models.BooleanField(default=False)
-    is_person = models.BooleanField(default=True)  
+    is_person = models.BooleanField(default=True)
     bio = models.TextField(default="Write a short biography", blank=True)
     resume = models.FileField(upload_to='cv/', blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
@@ -48,8 +50,3 @@ class CustomUser(AbstractUser):
             logger.debug(f"Assigned {self.username} to group 'REPORTER'.")
         except Group.DoesNotExist:
             logger.error("Group 'REPORTER' does not exist.")
-
-        
-
-
-

@@ -1,12 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
+# ,UserCreationForm
 from .models import CustomUser
-from django.contrib.auth import get_user_model # why this here?
+from django.contrib.auth import get_user_model  # why this here?
 from django.utils.translation import gettext_lazy as _
-
-User = get_user_model() # why this?
-
 from allauth.account.forms import SignupForm
+
+User = get_user_model()  # why this?
+
 
 class CustomSignupForm(SignupForm):
 
@@ -25,10 +26,10 @@ class CustomSignupForm(SignupForm):
 #     class Meta(UserCreationForm.Meta):
 #         model = CustomUser
 #         fields = ('username', 'email')
-        
+
 #         def __init__(self, *args, **kwargs):
 #             super().__init__(*args, **kwargs)
-            
+
 #             # Apply Bootstrap classes and custom styles to form fields
 #             self.fields['username'].widget.attrs.update({
 #                 'class': 'form-control w-100',
@@ -54,44 +55,51 @@ class CustomSignupForm(SignupForm):
 #                 user.save()
 #                 user.assign_initial_group()
 #             return user
-#==============user update form=============
+
+
+# ==============user update form=============
 class UsernameEmailChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email']
 
     def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            
-            # Apply Bootstrap classes and custom styles to form fields
-            self.fields['first_name'].widget.attrs.update({
-                'class': 'form-control w-100',
-                'placeholder': _('Enter first name'),
-            })
-            self.fields['last_name'].widget.attrs.update({
-                'class': 'form-control w-100',
-                'placeholder': _('Enter last name'),
-            })
-            self.fields['email'].widget.attrs.update({
-                'class': 'form-control d-flex p-2 bd-highlight',
-                'placeholder': _('Enter email'),
-            })
+        super().__init__(*args, **kwargs)
+
+        # Apply Bootstrap classes and custom styles to form fields
+        self.fields['first_name'].widget.attrs.update({
+            'class': 'form-control w-100',
+            'placeholder': _('Enter first name'),
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'class': 'form-control w-100',
+            'placeholder': _('Enter last name'),
+        })
+        self.fields['email'].widget.attrs.update({
+            'class': 'form-control d-flex p-2 bd-highlight',
+            'placeholder': _('Enter email'),
+        })
+
     def save(self, commit=True):
-            user = super().save(commit=False)
-            user.is_approved = False  # Set new user as unapproved by default
-            if commit:
-                user.save()
-                user.assign_initial_group()
-            return user
-#==============password change form=============
+        user = super().save(commit=False)
+        user.is_approved = False  # Set new user as unapproved by default
+        if commit:
+            user.save()
+            user.assign_initial_group()
+        return user
+
+
+# ==============password change form=============
 class PasswordChangeForm(PasswordChangeForm):
     pass
-#==============profile edit form=============
+
+
+# ==============profile edit form=============
 class ProfileChangeForm(forms.ModelForm):
-   class Meta:
+    class Meta:
         model = CustomUser
         fields = ['bio', 'avatar', 'resume']
-        
+
         def __init__(self, *args, **kwargs):
             user = kwargs.pop('user', None)
             super().__init__(*args, **kwargs)
@@ -100,7 +108,7 @@ class ProfileChangeForm(forms.ModelForm):
                 self.fields['avatar'].initial = user.customuser.avatar
                 self.fields['bio'].initial = user.customuser.bio
                 self.fields['resume'].initial = user.customuser.resume
-            
+
             # Apply Bootstrap classes and custom styles to form fields
             self.fields['bio'].widget.attrs.update({
                 'class': 'form-control d-flex p-2 bd-highlight',

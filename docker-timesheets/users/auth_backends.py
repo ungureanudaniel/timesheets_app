@@ -1,12 +1,6 @@
-from allauth.account.auth_backends import (
-    AuthenticationBackend as AllAuthAuthenticationBackend,
-)
-from django.contrib.auth import get_user_model
-
-# users/backends.py
-
 from allauth.account.auth_backends import AuthenticationBackend as AllAuthAuthenticationBackend
 from django.contrib.auth import get_user_model
+
 
 class AuthenticationBackend(AllAuthAuthenticationBackend):
     """

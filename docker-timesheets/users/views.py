@@ -3,7 +3,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from .forms import UsernameEmailChangeForm
 from django.urls import reverse
-from .forms import CustomSignupForm, ProfileChangeForm
+from .forms import ProfileChangeForm
+# ,CustomSignupForm
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -24,11 +25,11 @@ from django.db import transaction
 from allauth.account.views import SignupView
 from django.contrib.auth.models import Group
 
-User = get_user_model()
 
-#==============user registration view============
+# ==============user registration view============
 class CustomSignupView(SignupView):
     template = 'account/signup.html'
+
     def form_valid(self, form):
         # Call the original form_valid method
         response = super().form_valid(form)
@@ -40,6 +41,8 @@ class CustomSignupView(SignupView):
         user.save()
 
         return response
+
+
 # def register(request):
 #     if request.method == 'POST':
 #         form = CustomSignupForm(request.POST)  # access the registration form
@@ -72,7 +75,7 @@ class CustomSignupView(SignupView):
 #                         supervisors = User.objects.filter(groups__name='SUPERVISOR').values_list('email', flat=True)
 
 #                         recipients = list(admins) + list(supervisors)
-                        
+
 #                         send_mail(
 #                             subject,
 #                             plain_message,
@@ -80,7 +83,7 @@ class CustomSignupView(SignupView):
 #                             recipients,
 #                             html_message=html_message,
 #                         )
-                        
+
 #                         # success message
 #                         messages.warning(request, 'Registration successful. Your account is pending admin approval.')
 
@@ -97,9 +100,11 @@ class CustomSignupView(SignupView):
 #             messages.error(request, e)
 #     else:
 #         form = CustomSignupForm()
-    
+
 #     return render(request, 'registration/register.html', {'form': form})
-#==============user login view==============
+
+
+# ==============user login view==============
 class CustomLoginView(LoginView):
     template_name = 'account/login.html'  # The path to your custom login template
     authentication_form = AuthenticationForm  # Use Django's default AuthenticationForm
@@ -110,7 +115,8 @@ class CustomLoginView(LoginView):
         # If you want to add any additional logic before the form is validated, you can do it here.
         return super().form_valid(form)
 
-#==============user profile view============
+
+# ==============user profile view============
 class ProfileView(LoginRequiredMixin, DetailView):
     model = CustomUser
     template_name = 'registration/profile.html'
@@ -131,16 +137,19 @@ class ProfileView(LoginRequiredMixin, DetailView):
             context['show_limited_info'] = True
         else:
             context['show_limited_info'] = False
-        
+
         return context
-#============user profile editing====================
+
+
+# ============user profile editing====================
 # @login_required
 # def profile_edit_view(request, username):
 #     template_name = 'registration/profile_updater.html'
 #     # Fetch the user instance
 #     user = get_object_or_404(User, username=username)
-    
+
 #     # Fetch or create UserProfile instance for the user
+
 #     user_profile, created = CustomUser.objects.get_or_create(user=user)
 
 #     if request.method == 'POST':
@@ -158,6 +167,8 @@ class ProfileView(LoginRequiredMixin, DetailView):
 #         'form': form,}
 
 #     return render(request, template_name, context)
+
+
 class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = CustomUser
     form_class = ProfileChangeForm
@@ -166,13 +177,15 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         # Redirect to the profile page of the current user after successful update
         return reverse('profile', kwargs={'username': self.request.user.username})
+
     def get_object(self):
         # Retrieve the current user object
         return self.request.user
-#==============user credentials change view=====================
+
+
+# ==============user credentials change view=====================
 @login_required
 def user_change_view(request, username):
-    
     # Fetch the user instance
     user = get_object_or_404(User, username=username)
     if request.method == 'POST':
@@ -185,12 +198,14 @@ def user_change_view(request, username):
     else:
         user_form = UsernameEmailChangeForm(instance=request.user)
 
-    return render(request, 'registration/credentials_change.html', {'form': user_form, 'user':user})
+    return render(request, 'registration/credentials_change.html', {'form': user_form, 'user': user})
+
+
 @login_required
 def password_change_view(request, username):
     # Fetch the user instance
     user = get_object_or_404(User, username=username)
-    
+
     if request.method == 'POST':
         password_form = PasswordChangeForm(user=request.user, data=request.POST)
 
@@ -202,4 +217,4 @@ def password_change_view(request, username):
             return redirect('profile', username=request.user.username)
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'registration/password_change.html', {'form': form, 'user':user})
+    return render(request, 'registration/password_change.html', {'form': form, 'user': user})

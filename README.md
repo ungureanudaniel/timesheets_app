@@ -1,11 +1,11 @@
-# Django Timesheets App == underconstruction ==
+# Django Timesheets App == Under Construction ==
 
-This repository contains a Django web application for managing timesheets in a company or anyhow you want. It includes features for user registration, profile management, timesheet submission, and reporting.
+This repository contains a Django web application for managing timesheets in a company or for personal use. It includes features for user registration, profile management, timesheet submission, and reporting.
 
 ## Features
 
 - **User Registration and Authentication**:
-  - Users can register with username, email, and password.
+  - Users can register with a username, email, and password.
   - New registrations are pending approval by administrators.
   
 - **User Profile**:
@@ -24,55 +24,51 @@ This repository contains a Django web application for managing timesheets in a c
   - Plan to utilize Redis for caching.
 
 - **REST API**:
-  - Will have Integration with external systems via RESTful APIs.
+  - Will have integration with external systems via RESTful APIs.
 
-- **CONTAINERIZATION**:
-  - Docker containerization will be done with docker compose
+- **Containerization**:
+  - Docker containerization will be handled with Docker Compose.
 
 ## Project Structure
 
 The project follows a standard Django application structure:
 
-timesheets/
-├── accounts/ # App for user authentication and profiles
-├── timesheets/ # App for timesheet management
-├── static/ # Static files (CSS, JS, etc.)
-├── templates/ # HTML templates
-├── manage.py # Django management script
-└── requirements.txt # Python dependencies
+timesheets/ ├── accounts/ # App for user authentication and profiles ├── timesheets/ # App for timesheet management ├── static/ # Static files (CSS, JS, etc.) ├── templates/ # HTML templates ├── manage.py # Django management script └── requirements.txt # Python dependencies
+
 
 ## Setup Instructions
 
 ### Prerequisites
 
-- Python 3.10.8
-- Django 5.1
-- Redis (for caching, still under implementation)
-- Celery (for async tasks, still under implementation)
+- Docker
+- Docker Compose
 
-### Installation
+### Installation and Running with Docker
 
-1. Clone the repository:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/ungureanudaniel/timesheets.git
    cd timesheets
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv myvenv
-   source myvenv/bin/activate # to ativate the environment in linux
-   ./myvenv/Scripts/activate` # to activate the environment in windows, although PowerShell can give you a headache. I recommend though the terminal in Visual Studio Code if windows is not avoidable
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-4. Apply database migrations:
-   ```bash
-   python manage.py migrate
-5. Create a superuser (admin):
-   ```bash
-   python manage.py createsuperuser
-6. Run the development server:
-   ```bash
-   python manage.py runserver
-7. Access the application at http://localhost:8000
+2. **Build and start the containers**:
+  ```bash 
+   docker-compose up --build
+
+2. **Create the superuser (admin):**:
+  ```bash 
+   docker-compose exec web python manage.py createsuperuser
+
+2. **Access the application**:
+
+Open your web browser and go to http://localhost:8000.
+
+2. **Clone the repository**:
+  ```bash 
+   docker-compose down
+
+### Additional Notes
+
+Ensure that Docker and Docker Compose are properly installed on your system.
+The application will run in development mode, and additional configuration may be necessary for production use.
+For any issues or contributions, feel free to open an issue or pull request in the repository.
 

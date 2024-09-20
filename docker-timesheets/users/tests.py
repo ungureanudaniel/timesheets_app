@@ -3,9 +3,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.core import mail
+from users.forms import CustomUserCreationForm
 
 User = get_user_model()
-#=========USER MODEL TEST========================
+
+
+# =========USER MODEL TEST========================
 class CustomUserModelTests(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name='REPORTER')
@@ -24,9 +27,9 @@ class CustomUserModelTests(TestCase):
 
     def test_user_string_representation(self):
         self.assertEqual(str(self.user), 'testuser')
-#=========USER REGISTRATION VIEW TEST========================
-from users.forms import CustomUserCreationForm  
 
+
+# =========USER REGISTRATION VIEW TEST========================
 class RegisterViewTests(TestCase):
     def setUp(self):
         self.group_timesheets_input = Group.objects.create(name='REPORTER')
@@ -59,7 +62,7 @@ class RegisterViewTests(TestCase):
         self.assertContains(response, 'Registration successful. Your account is pending approval.')
 
     def test_register_view_post_existing_user(self):
-        existing_user = User.objects.create_user(username='existinguser', email='existing@example.com', password='password')
+        # existing_user = User.objects.create_user(username='existinguser', email='existing@example.com', password='password')
 
         form_data = {
             'username': 'existinguser',
@@ -74,7 +77,7 @@ class RegisterViewTests(TestCase):
         self.assertContains(response, 'Username already exists. Please choose a different username.')
 
     def test_register_view_post_existing_email(self):
-        existing_user = User.objects.create_user(username='existinguser', email='existing@example.com', password='password')
+        # existing_user = User.objects.create_user(username='existinguser', email='existing@example.com', password='password')
 
         form_data = {
             'username': 'newuser',

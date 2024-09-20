@@ -6,5 +6,6 @@ logger.add(sys.stdout, level="DEBUG", format="{time} {level} {message}", backtra
 logger.add("logs/debug.log", level="DEBUG", rotation="10 MB", compression="zip")
 logger.add("logs/error.log", level="ERROR", rotation="10 MB", compression="zip")
 
+
 def get_logger():
     return logger

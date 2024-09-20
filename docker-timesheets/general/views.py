@@ -7,18 +7,18 @@ from timesheet.models import Timesheet, Activity
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 
-#==========home page==============
+
+# ==========home page==============
 def home(request):
     template = "general/home.html"
 
     context = {}
     return render(request, template, context)
-#===========contact page==============
+
+
+# ===========contact page==============
 def contact(request):
     template = "general/contact.html"
 
-    context = {
-
-
-    }
+    context = {}
     return render(request, template, context)

@@ -24,7 +24,7 @@ if os.getenv('ALLOWED_HOSTS'):
 
 DEVELOPMENT = bool(os.environ.get("DEBUG", default=0))
 
-#-----------authentication----------------------
+# -----------authentication----------------------
 AUTH_USER_MODEL = 'users.CustomUser'
 AUTH_TOKEN_LENGTH = 100
 AUTHENTICATION_BACKENDS = [
@@ -40,16 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages', #message frmwk
+    'django.contrib.messages',  # message frmwk
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
-    #developer added libraries
+    # developer added libraries
     'django.contrib.sitemaps',
     'django.conf.urls.i18n',
     'hitcount',
     'django.contrib.sites',
     # 'django_recaptcha',
-    #user apps
+    # user apps
     'widget_tweaks',
     'general',
     'users',
@@ -60,30 +60,31 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     "axes",
-    
-    
 ]
+
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+
 MIDDLEWARE = [
     # 'django.middleware.gzip.GZipMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #--------caching middleware------------------
-    #--------whitenoise middleware for media load
+    # --------caching middleware------------------
+    # --------whitenoise middleware for media load
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    #--------django internalization for language selection
-    'django.contrib.messages.middleware.MessageMiddleware',#message frmwk
+    # --------django internalization for language selection
+    'django.contrib.messages.middleware.MessageMiddleware',  # message frmwk
     "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
-    #--------caching middleware-------------------
+    # --------caching middleware-------------------
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #-----------authentication---------------------
+    # -----------authentication---------------------
     'allauth.account.middleware.AccountMiddleware',
     'axes.middleware.AxesMiddleware',
 ]
@@ -129,7 +130,6 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-        
     }
 }
 # Password validation
@@ -173,7 +173,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-gettext = lambda s: s
+
 LANGUAGES = (
     ('ro', _('Română')),
     ('en', _('English')),
@@ -183,7 +183,7 @@ LOCALE_PATHS = [
 ]
 DEFAULT_LANGUAGE = 1
 
-#==============authentication settings=========================
+# ==============authentication settings=========================
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -206,30 +206,31 @@ ACCOUNT_UNIQUE_EMAIL = True
 # Authentication method ('email' for email only, 'username' for username, 'username_email' for both)
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 
-ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'# Redirect after logout
-#==============EMAIL SETTINGS==========================
-#-----test
-if DEBUG == True:
-    #--------development
+ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'  # Redirect after logout
+# ==============EMAIL SETTINGS==========================
+# -----test
+if DEBUG:
+    # --------development
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 else:
-    #-----production
+    # -----production
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#-----email credentials
-EMAIL_PORT=os.getenv('EMAIL_PORT')
-EMAIL_HOST=os.getenv('EMAIL_HOST')
-EMAIL_USE_TLS=True
-EMAIL_USE_SSL=False
-EMAIL_HOST_USER='contact@bucegipark.ro'
-EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
-ACCOUNTANT_EMAIL=os.getenv('ACCOUNTANT_EMAIL')
+# -----email credentials
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'contact@bucegipark.ro'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+ACCOUNTANT_EMAIL = os.getenv('ACCOUNTANT_EMAIL')
 MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
- }
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 # ============ django-resized settings ====================
 DJANGORESIZED_DEFAULT_SIZE = [1920, 1080]
 DJANGORESIZED_DEFAULT_SCALE = 0.5
@@ -246,28 +247,28 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
-#==============recaptcha keys===============================
+# ==============recaptcha keys===============================
 RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_KEY')
 RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_SECRET')
 if os.getenv('DEVELOPMENT'):
     SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-#================django simple captcha======================
-CAPTCHA_IMAGE_SIZE = (100,50)
+# ================django simple captcha======================
+CAPTCHA_IMAGE_SIZE = (100, 50)
 CAPTCHA_BACKGROUND_COLOR = "#2eb872"
 CAPTCHA_FOREGROUND_COLOR = "black"
-#================django payments settings=====================
+# ================django payments settings=====================
 TICKET_EMAIL_HEADER = os.getenv('TICKET_EMAIL_HEADER')
 BASE_URL = os.getenv('BASE_URL')
-#=====================LOGGING  ERRORS=========================
+# =====================LOGGING  ERRORS=========================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -288,9 +289,9 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers':['file', 'console'],
+            'handlers': ['file', 'console'],
             'propagate': False,
-            'level':'ERROR',
+            'level': 'ERROR',
         },
         'services': {
             'handlers': ['file'],
@@ -300,7 +301,6 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'ERROR',
         },
-        
     }
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

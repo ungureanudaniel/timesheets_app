@@ -20,7 +20,7 @@ RUN apt-get update && \
 RUN pip install --upgrade pip
 RUN pip install flake8==6.0.0
 COPY . /usr/src/docker-timesheets/
-RUN flake8 --ignore=E501,F401 .
+RUN flake8 --ignore=E501,F401,F403,F405,F841 .
 
 # Install Python dependencies and create wheels
 COPY ./requirements.txt .

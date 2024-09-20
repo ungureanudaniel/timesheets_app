@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 
+
 class Activity(models.Model):
     """
     This class creates db tables for the types of actvities
@@ -11,11 +12,14 @@ class Activity(models.Model):
     class Meta:
         verbose_name = "Activity"
         verbose_name_plural = "Activities"
+
     def __str__(self):
+
         return "{} - {}".format(self.code, self.name)
-    
+
+
 class FundsSource(models.Model):
-    """This class created db tables for the source of funds, which will be selectable from a 
+    """This class created db tables for the source of funds, which will be selectable from a
     dropdown list when generating a timesheet
     """
     name = models.CharField(max_length=100)
@@ -24,8 +28,11 @@ class FundsSource(models.Model):
     class Meta:
         verbose_name = "Funds"
         verbose_name_plural = "Funds"
+
     def __str__(self):
         return self.name
+
+
 class Timesheet(models.Model):
     """
     This class created db tables for each timesheet, linked to activity model and FundsSource model by ForeinKey relations
