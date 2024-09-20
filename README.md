@@ -27,7 +27,7 @@ This repository contains a Django web application for managing timesheets in a c
   - Will have Integration with external systems via RESTful APIs.
 
 - **CONTAINERIZATION**:
-  - Docker containerization will be done
+  - Docker containerization will be done with docker compose
 
 ## Project Structure
 
@@ -46,7 +46,7 @@ timesheets/
 ### Prerequisites
 
 - Python 3.10.8
-- Django 3.2
+- Django 5.1
 - Redis (for caching, still under implementation)
 - Celery (for async tasks, still under implementation)
 
@@ -75,3 +75,4 @@ timesheets/
    ```bash
    python manage.py runserver
 7. Access the application at http://localhost:8000
+
