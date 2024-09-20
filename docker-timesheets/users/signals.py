@@ -1,18 +1,10 @@
-from django.db.models.signals import post_save
+from allauth.account.signals import user_signed_up
 from django.dispatch import receiver
-from .models import UserProfile, CustomUser
-from django.contrib.auth import get_user_model
-from log_config import logger
+from django.contrib.auth.models import Group
 
-# # Signal to automatically create a UserProfile when a CustomUser is created
-# @receiver(post_save, sender=CustomUser)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     logger.info(f"New user account created for {instance.username}.")
-#     if created:
-#         UserProfile.objects.create(user=instance)
-
-# # Signal to save the UserProfile when the CustomUser is saved
-# @receiver(post_save, sender=CustomUser)
-# def save_user_profile(sender, instance, **kwargs):
-#     logger.info(f"New user account saved for {instance.username}.")
-#     instance.userprofile.save()
+@receiver(user_signed_up)
+def user_signed_up_receiver(request, user, **kwargs):
+    # Automatically add the user to a group after signing up
+    group = Group.objects.get(name='REPORTER')
+    user.groups.add(group)
+    user.save()

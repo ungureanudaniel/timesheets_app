@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   web:
-    build: ./docker-timesheets
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./docker-timesheets/:/usr/src/docker-timesheets/  # Mount the main app
+    build: 
+      context: ./docker-timesheets
+      dockerfile: Dockerfile.prod
+    command: gunicorn docker-timesheets.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     depends_on:
       - db
   db:
@@ -17,6 +17,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.dev
+      - ./.env.prod.db
 volumes:
   postgres_data:

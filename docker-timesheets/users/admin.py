@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import CustomUser, UserProfile
+from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
-from .forms import CustomUserCreationForm, UserUpdateForm
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -10,11 +9,5 @@ class CustomUserAdmin(UserAdmin):
     
     # Add the custom `is_approved` field in the form view
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('is_approved',)}),  # Adding the custom field to the form
-    )
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'bio', ]
-    list_filter = ['user',]
-    search_fields = ['user',]
+        (None, {'fields': ('is_approved',)}),
+    )  # Adding the custom field to the form

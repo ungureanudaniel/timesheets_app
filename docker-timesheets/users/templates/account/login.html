@@ -1,5 +1,6 @@
 {% extends "general/base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% load i18n %}
 {% load cache %}
 {% block content %}
@@ -29,7 +30,7 @@
                     </form>
                     <!-- Additional Options -->
                     <div class="text-center mt-3">
-                        <p>{% trans "Don't have an account? " %}<a href="{% url 'register' %}">{% trans 'Register' %}</a></p>
+                        <p>{% trans "Don't have an account? " %}<a href="{% url 'custom_signup' %}">{% trans 'Register' %}</a></p>
                     </div>
                 </div>
             </div>

@@ -1,46 +1,61 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import CustomUser, UserProfile
+from .models import CustomUser
 from django.contrib.auth import get_user_model # why this here?
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model() # why this?
 
-class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = CustomUser
-        fields = ('username', 'email')
-        
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            
-            # Apply Bootstrap classes and custom styles to form fields
-            self.fields['username'].widget.attrs.update({
-                'class': 'form-control w-100',
-                'placeholder': _('Enter username'),
-            })
-            self.fields['email'].widget.attrs.update({
-                'class': 'form-control d-flex p-2 bd-highlight',
-                'placeholder': _('Enter email'),
-            })
-            self.fields['password1'].widget.attrs.update({
-                'class': 'form-control d-flex p-2 bd-highlight',
-                'placeholder': _('Enter password'),
-            })
-            self.fields['password2'].widget.attrs.update({
-                'class': 'form-control d-flex p-2 bd-highlight',
-                'placeholder': _('Confirm password'),
-            })
+from allauth.account.forms import SignupForm
 
-        def save(self, commit=True):
-            user = super().save(commit=False)
-            user.is_approved = False  # Set new user as unapproved by default
-            if commit:
-                user.save()
-                user.assign_initial_group()
-            return user
+class CustomSignupForm(SignupForm):
+
+    def save(self, request):
+
+        # Ensure you call the parent class's save.
+        # .save() returns a User object.
+        user = super(CustomSignupForm, self).save(request)
+
+        # Add your own processing here.
+
+        # You must return the original result.
+        return user
+
+# class CustomUserCreationForm(UserCreationForm):
+#     class Meta(UserCreationForm.Meta):
+#         model = CustomUser
+#         fields = ('username', 'email')
+        
+#         def __init__(self, *args, **kwargs):
+#             super().__init__(*args, **kwargs)
+            
+#             # Apply Bootstrap classes and custom styles to form fields
+#             self.fields['username'].widget.attrs.update({
+#                 'class': 'form-control w-100',
+#                 'placeholder': _('Enter username'),
+#             })
+#             self.fields['email'].widget.attrs.update({
+#                 'class': 'form-control d-flex p-2 bd-highlight',
+#                 'placeholder': _('Enter email'),
+#             })
+#             self.fields['password1'].widget.attrs.update({
+#                 'class': 'form-control d-flex p-2 bd-highlight',
+#                 'placeholder': _('Enter password'),
+#             })
+#             self.fields['password2'].widget.attrs.update({
+#                 'class': 'form-control d-flex p-2 bd-highlight',
+#                 'placeholder': _('Confirm password'),
+#             })
+
+#         def save(self, commit=True):
+#             user = super().save(commit=False)
+#             user.is_approved = False  # Set new user as unapproved by default
+#             if commit:
+#                 user.save()
+#                 user.assign_initial_group()
+#             return user
 #==============user update form=============
-class UserUpdateForm(UserChangeForm):
+class UsernameEmailChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email']
@@ -74,7 +89,7 @@ class PasswordChangeForm(PasswordChangeForm):
 #==============profile edit form=============
 class ProfileChangeForm(forms.ModelForm):
    class Meta:
-        model = UserProfile
+        model = CustomUser
         fields = ['bio', 'avatar', 'resume']
         
         def __init__(self, *args, **kwargs):
@@ -82,9 +97,9 @@ class ProfileChangeForm(forms.ModelForm):
             super().__init__(*args, **kwargs)
 
             if user:
-                self.fields['avatar'].initial = user.userprofile.avatar
-                self.fields['bio'].initial = user.userprofile.bio
-                self.fields['resume'].initial = user.userprofile.resume
+                self.fields['avatar'].initial = user.customuser.avatar
+                self.fields['bio'].initial = user.customuser.bio
+                self.fields['resume'].initial = user.customuser.resume
             
             # Apply Bootstrap classes and custom styles to form fields
             self.fields['bio'].widget.attrs.update({

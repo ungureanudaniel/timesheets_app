@@ -6,9 +6,9 @@ from django.contrib.messages import constants as messages
 from django.utils.translation import gettext_lazy as _
 
 load_dotenv(verbose=True)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -17,14 +17,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')== 'True'
+DEBUG = bool(os.environ.get("DEBUG", default=0))
 ALLOWED_HOSTS = []
 if os.getenv('ALLOWED_HOSTS'):
-    ALLOWED_HOSTS.extend(os.getenv('ALLOWED_HOSTS').split(','))
+    ALLOWED_HOSTS.extend(os.getenv('ALLOWED_HOSTS').split(' '))
 
-DEVELOPMENT = os.getenv('DEBUG')== 'True'
+DEVELOPMENT = bool(os.environ.get("DEBUG", default=0))
+
+#-----------authentication----------------------
 AUTH_USER_MODEL = 'users.CustomUser'
-
+AUTH_TOKEN_LENGTH = 100
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Application definition
 
@@ -39,26 +46,29 @@ INSTALLED_APPS = [
     #developer added libraries
     'django.contrib.sitemaps',
     'django.conf.urls.i18n',
-    'ckeditor',
     'hitcount',
     'django.contrib.sites',
-    'django_recaptcha',
-    'debug_toolbar',
+    # 'django_recaptcha',
     #user apps
+    'widget_tweaks',
     'general',
     'users',
     'timesheet',
     'reports',
     'api',
+    'debug_toolbar',
+    'allauth',
+    'allauth.account',
+    "axes",
+    
+    
 ]
-SITE_ID = 1
+
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
 MIDDLEWARE = [
-    'django.middleware.gzip.GZipMiddleware',
+    # 'django.middleware.gzip.GZipMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -73,6 +83,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #-----------authentication---------------------
+    'allauth.account.middleware.AccountMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'timesheets_main.urls'
@@ -93,6 +106,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 # Enable caching in project
 CACHES = {
     "default": {
@@ -108,25 +123,15 @@ WSGI_APPLICATION = 'timesheets_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("POSTGRES_USER", "user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'db_name',                      
-#         'USER': 'db_user',
-#         'PASSWORD': 'db_user_password',
-#         'HOST': '',
-#         'PORT': 'db_port_number',
-#     }
-# }
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -178,11 +183,38 @@ LOCALE_PATHS = [
 ]
 DEFAULT_LANGUAGE = 1
 
+#==============authentication settings=========================
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm',
+}
+
+# Whether email is required during signup
+ACCOUNT_EMAIL_REQUIRED = True
+
+# Whether email verification is mandatory before login
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Or 'optional', 'none'
+
+# Disable username (optional)
+ACCOUNT_USERNAME_REQUIRED = True
+
+# Set unique email (one account per email)
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Authentication method ('email' for email only, 'username' for username, 'username_email' for both)
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+
+ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'# Redirect after logout
 #==============EMAIL SETTINGS==========================
 #-----test
-# EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-#-----production
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+if DEBUG == True:
+    #--------development
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    #-----production
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #-----email credentials
 EMAIL_PORT=os.getenv('EMAIL_PORT')
 EMAIL_HOST=os.getenv('EMAIL_HOST')
@@ -217,7 +249,7 @@ MESSAGE_TAGS = {
 #==============recaptcha keys===============================
 RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_KEY')
 RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_SECRET')
-if os.getenv('DEVELOPMENT') == 'True':
+if os.getenv('DEVELOPMENT'):
     SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
