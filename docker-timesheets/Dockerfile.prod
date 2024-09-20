@@ -54,6 +54,10 @@ COPY --from=builder /usr/src/docker-timesheets/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
+# Create the appropriate directories for static and media files
+RUN mkdir staticfiles mediafiles
+RUN chown -R daniel:daniel /home/docker-timesheets/web/staticfiles /home/docker-timesheets/web/mediafiles
+
 # Copy entrypoint.prod.sh
 COPY ./entrypoint.prod.sh .
 RUN sed -i 's/\r$//g' $APP_HOME/entrypoint.prod.sh
@@ -62,11 +66,14 @@ RUN chmod +x $APP_HOME/entrypoint.prod.sh
 # Copy the project source code
 COPY . $APP_HOME
 
-# Change ownership of the files to the docker_timesheets user
-RUN chown -R docker-timesheets:docker-timesheets $APP_HOME
+# Change ownership of the files to the app user
+RUN chown -R daniel:daniel $APP_HOME
 
-# Change to the app user
+# Switch to the app user
 USER daniel
 
-# Run entrypoint.prod.sh
+# Run the entrypoint script
 ENTRYPOINT ["/home/docker-timesheets/web/entrypoint.prod.sh"]
+
+# Default command (can be overridden)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "docker_timesheets.wsgi:application"]
