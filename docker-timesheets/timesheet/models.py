@@ -14,7 +14,6 @@ class Activity(models.Model):
         verbose_name_plural = "Activities"
 
     def __str__(self):
-
         return "{} - {}".format(self.code, self.name)
 
 
@@ -48,4 +47,4 @@ class Timesheet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Timesheet for {self.user.username} - Week of {self.week_start_date}"
+        return f"Timesheet for {self.user.username}"

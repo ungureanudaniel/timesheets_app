@@ -16,8 +16,9 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     path('', include('general.urls')),
-    path('timesheet', include('timesheet.urls')),
-    path('reports', include('reports.urls')),
+    path('timesheets/', include('timesheet.urls')),
+    path('administration/', include('dashboard.urls')),
+    path('reports/', include('reports.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('users/', include('users.urls')),
 )

@@ -30,6 +30,18 @@ msgstr ""
 msgid "Create Timesheet"
 msgstr "Creează Foaia de Pontaj"
 
+msgid "month"
+msgstr "luna"
+
+msgid "week"
+msgstr "săptămână"
+
+msgid "day"
+msgstr "zi"
+
+msgid "Enter Timesheet Data"
+msgstr "Introduce-ți activitatea"
+
 msgid "Submit your monthly working hours"
 msgstr "Trimite orele tale de lucru lunar"
 

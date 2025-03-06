@@ -31,7 +31,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     is_approved = models.BooleanField(default=False)
     is_person = models.BooleanField(default=True)
-    bio = models.TextField(default="Write a short biography", blank=True)
+    bio = models.TextField(default="Write a short description of yourself", blank=True)
     resume = models.FileField(upload_to='cv/', blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 

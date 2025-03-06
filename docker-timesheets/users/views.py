@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
+from django.views import generic
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from .forms import UsernameEmailChangeForm
 from django.urls import reverse
 from .forms import ProfileChangeForm
 # ,CustomSignupForm
+from django.utils import timezone
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
@@ -20,16 +21,47 @@ from django.conf import settings
 from django.contrib import messages
 from .models import *
 from django.contrib.auth import update_session_auth_hash
-from django.views.generic import View
 from django.db import transaction
 from allauth.account.views import SignupView
-from django.contrib.auth.models import Group
 
+# Function to check if the user is admin
+def is_admin(user):
+    return user.is_staff or user.is_superuser
+
+# Protect the admin dashboard view
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    # Your logic for the admin dashboard
+    return render(request, 'admin/dashboard.html')
+
+# ==============user list============
+class AnalyticsView(generic.ListView):
+    template = "dashboard/analytics.html"
+
+    queryset = CustomUser.objects.all()
+    paginate_by = 20
+
+    def get(self, request, **kwargs):
+        # get each individual userprofile 
+        user_profile = self.request.user.customuser
+        print(user_profile) # do some debugging here to make sure that there is indeed a userprofile in your db.
+
+# ==============user list============
+class UserListView(generic.ListView):
+    template = "account/user_management.html"
+
+    model = CustomUser
+    paginate_by = 1
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["users"] = CustomUser.objects.all()
+        return context
 
 # ==============user registration view============
 class CustomSignupView(SignupView):
     template = 'account/signup.html'
-
+    
     def form_valid(self, form):
         # Call the original form_valid method
         response = super().form_valid(form)
@@ -117,9 +149,9 @@ class CustomLoginView(LoginView):
 
 
 # ==============user profile view============
-class ProfileView(LoginRequiredMixin, DetailView):
+class ProfileView(LoginRequiredMixin, generic.DetailView):
     model = CustomUser
-    template_name = 'registration/profile.html'
+    template_name = 'account/profile.html'
     context_object_name = 'user'
 
     def get_object(self):
@@ -169,10 +201,10 @@ class ProfileView(LoginRequiredMixin, DetailView):
 #     return render(request, template_name, context)
 
 
-class ProfileEditView(LoginRequiredMixin, UpdateView):
+class ProfileEditView(LoginRequiredMixin, generic.UpdateView):
     model = CustomUser
     form_class = ProfileChangeForm
-    template_name = 'registration/profile_updater.html'
+    template_name = 'account/profile_edit.html'
 
     def get_success_url(self):
         # Redirect to the profile page of the current user after successful update
@@ -187,7 +219,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 @login_required
 def user_change_view(request, username):
     # Fetch the user instance
-    user = get_object_or_404(User, username=username)
+    user = get_object_or_404(CustomUser, username=username)
     if request.method == 'POST':
         user_form = UsernameEmailChangeForm(request.POST, instance=request.user)
 
@@ -198,7 +230,7 @@ def user_change_view(request, username):
     else:
         user_form = UsernameEmailChangeForm(instance=request.user)
 
-    return render(request, 'registration/credentials_change.html', {'form': user_form, 'user': user})
+    return render(request, 'account/credentials_change.html', {'form': user_form, 'user': user})
 
 
 @login_required
@@ -217,4 +249,4 @@ def password_change_view(request, username):
             return redirect('profile', username=request.user.username)
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'registration/password_change.html', {'form': form, 'user': user})
+    return render(request, 'account/password_change.html', {'form': form, 'user': user})

@@ -112,7 +112,7 @@ class ProfileChangeForm(forms.ModelForm):
             # Apply Bootstrap classes and custom styles to form fields
             self.fields['bio'].widget.attrs.update({
                 'class': 'form-control d-flex p-2 bd-highlight',
-                'placeholder': _('Attach resume'),
+                'placeholder': _('Write a short description of yourself'),
             })
             self.fields['avatar'].widget.attrs.update({
                 'class': 'form-control d-flex p-2 bd-highlight',
@@ -120,11 +120,13 @@ class ProfileChangeForm(forms.ModelForm):
             })
             self.fields['resume'].widget.attrs.update({
                 'class': 'form-control d-flex p-2 bd-highlight',
+                'accept': '.pdf',
                 'placeholder': _('Attach a new resume'),
             })
-
         def save(self, commit=True):
             user_profile = super().save(commit=False)
             if commit:
                 user_profile.save()
             return user_profile
+    bio = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=False)  # Define bio with Textarea widget
+    

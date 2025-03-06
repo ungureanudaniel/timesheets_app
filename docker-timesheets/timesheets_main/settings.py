@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'general',
     'users',
+    'dashboard',
     'timesheet',
     'reports',
     'api',
@@ -167,7 +168,7 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
