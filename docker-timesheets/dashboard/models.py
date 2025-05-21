@@ -12,4 +12,3 @@ class ActivityProgram(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.activity_code, self.activity_title)
-

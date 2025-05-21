@@ -25,6 +25,7 @@ class MonthlyReportPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+
 class MonthlyReportCreateView(generics.CreateAPIView):
     """
     This class handles the creation of MonthlyReport instances.

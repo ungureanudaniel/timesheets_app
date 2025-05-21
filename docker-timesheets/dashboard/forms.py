@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class ActivityProgramForm(forms.ModelForm):
-    week_choices = [(i, i) for i in range(datetime.date.today().isocalendar()[1]-3,datetime.date.today().isocalendar()[1]+3)]  # Choices from 0 to 8
+    week_choices = [(i, i) for i in range(datetime.date.today().isocalendar()[1] - 3, datetime.date.today().isocalendar()[1] + 3)]  # Choices from 0 to 8
 
     week = forms.ChoiceField(choices=week_choices, widget=forms.Select(attrs={'class': 'form-select', 'placeholder': _('Select week number')}))
 

@@ -4,29 +4,37 @@ from django.utils import timezone
 from users.models import CustomUser
 from timesheet.models import Timesheet
 
+
 # main admin dashboard view.
 def dashboard(request):
     template = "dashboard/dashboard.html"
 
     context = {}
     return render(request, template, context)
+
+
 # the analytics view for the admin/manager.
 def analytics(request):
     template = "dashboard/analytics.html"
 
     context = {}
     return render(request, template, context)
+
+
 # the activities view for the admin/manager.
 def pal_activities(request):
     template = "dashboard/pal.html"
 
     context = {}
     return render(request, template, context)
+
+
 def activity_program(request):
     template = "activities/activity-program.html"
 
     context = {}
     return render(request, template, context)
+
 
 # the worked hours per member view
 def worked_hours_per_member(request):
@@ -44,6 +52,7 @@ def worked_hours_per_member(request):
         })
 
     return JsonResponse(data, safe=False)
+
 
 def yearly_statistics(request):
     current_year = timezone.now().year
