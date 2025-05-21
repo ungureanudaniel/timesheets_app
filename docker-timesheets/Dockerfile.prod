@@ -2,8 +2,8 @@
 # BUILDER #
 ###########
 
-# Pull official base image for Python 3.10.8
-FROM python:3.10.8-slim-buster as builder
+# Use Python 3.12 for both stages
+FROM python:3.12-slim-bookworm as builder
 
 # Set work directory
 WORKDIR /usr/src/docker-timesheets
@@ -14,66 +14,60 @@ ENV PYTHONUNBUFFERED 1
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc
+    apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Lint code with Flake8
+# Install linting and dependencies
 RUN pip install --upgrade pip
 RUN pip install flake8==6.0.0
-COPY . /usr/src/docker-timesheets/
+COPY . .
 RUN flake8 --ignore=E501,F401,F403,F405,F841 .
 
-# Install Python dependencies and create wheels
+# Create wheels
 COPY ./requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/docker-timesheets/wheels -r requirements.txt
-
 
 #########
 # FINAL #
 #########
 
-# Pull official base image for Python 3.10.8
-FROM python:3.10.8-slim-buster
+FROM python:3.12-slim-bookworm
 
-# Create directory for the app user
-RUN mkdir -p /home/docker-timesheets
+# Create and configure app user
+RUN addgroup --system daniel && \
+    adduser --system --ingroup daniel daniel
 
-# Create the app user
-RUN addgroup --system daniel && adduser --system --group daniel
-
-# Create the appropriate directories
-ENV HOME=/home/docker-timesheets
+# Set up directories
 ENV APP_HOME=/home/docker-timesheets/web
-RUN mkdir $APP_HOME
+RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
-# Copy Python wheels and requirements from the builder stage
+# Copy from builder
 COPY --from=builder /usr/src/docker-timesheets/wheels /wheels
 COPY --from=builder /usr/src/docker-timesheets/requirements.txt .
 
-# Install the Python dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+# Install dependencies
+RUN pip install --no-cache /wheels/* && \
+    rm -rf /wheels
 
-# Create the appropriate directories for static and media files
-RUN mkdir staticfiles mediafiles
-RUN chown -R daniel:daniel /home/docker-timesheets/web/staticfiles /home/docker-timesheets/web/mediafiles
+# Copy project files
+COPY . .
 
-# Copy entrypoint.prod.sh
+# Set permissions
+RUN chown -R daniel:daniel $APP_HOME && \
+    chmod -R 755 $APP_HOME/staticfiles $APP_HOME/mediafiles
+
+# Entrypoint setup
 COPY ./entrypoint.prod.sh .
-RUN sed -i 's/\r$//g' $APP_HOME/entrypoint.prod.sh
-RUN chmod +x $APP_HOME/entrypoint.prod.sh
+RUN sed -i 's/\r$//g' entrypoint.prod.sh && \
+    chmod +x entrypoint.prod.sh
 
-# Copy the project source code
-COPY . $APP_HOME
-
-# Change ownership of the files to the app user
-RUN chown -R daniel:daniel $APP_HOME
-
-# Switch to the app user
+# Switch to non-root user
 USER daniel
 
-# Run the entrypoint script
+# Runtime configuration
 ENTRYPOINT ["/home/docker-timesheets/web/entrypoint.prod.sh"]
-
-# Default command (can be overridden)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "docker_timesheets.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "docker_timesheets.wsgi:application"]

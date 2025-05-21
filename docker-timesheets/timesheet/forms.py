@@ -15,4 +15,8 @@ class TimesheetForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'id': 'datepicker', 'placeholder': 'Select date'}),
             'fundssource': forms.Select(attrs={'class': 'form-control', 'placeholder': _('Choose funding source')}),
             'activity': forms.Select(attrs={'class': 'form-control', 'placeholder': _('Choose activity')}),
-            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Describe activity')}), }
+            'description': forms.TextInput(attrs={'class': 'form-control timesheet-description', 'rows': 4, 'placeholder': _('Describe activity')}), }
+
+    def __init__(self, *args, selected_date=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.selected_date = selected_date

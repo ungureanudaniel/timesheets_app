@@ -7,14 +7,14 @@
 {% block content %}
 <div class="timesheet-list container mt-4">
     
-    <h1 class="mb-4">{% trans 'Timesheet List' %}</h1>
+    <h1 class="mb-4">{% trans 'Timesheets calendar' %}</h1>
     
     <div class="col-md-12">  
         <div id='calendar'>
         </div>
     </div>
 </div>
-{% include 'modals/create_timesheets.html' %}
+{% include 'modals/create_timesheets.html' with form=form %}
 <script>
     $.ajaxSetup({
     beforeSend: function(xhr, settings) {

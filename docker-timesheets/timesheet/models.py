@@ -37,7 +37,6 @@ class Timesheet(models.Model):
     This class created db tables for each timesheet, linked to activity model and FundsSource model by ForeinKey relations
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    funds_from = models.CharField(max_length=50)
     date = models.DateField()
     hours_worked = models.DecimalField(max_digits=5, decimal_places=0)
     fundssource = models.ForeignKey(FundsSource, on_delete=models.CASCADE)

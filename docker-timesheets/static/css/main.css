@@ -107,7 +107,7 @@ body {
     border-color: #0056b3;
 }
 .custom-modal-height {
-    max-height: 90vh; /* Adjust this value as needed */
+    max-height: 120vh; /* Adjust this value as needed */
     overflow-y: auto; /* Enable vertical scrolling if the content exceeds the modal height */
 }
 .timesheet-container {
@@ -207,4 +207,14 @@ body {
     background: linear-gradient(45deg, #83B8D7, #BAA6FD);
     display: grid;
   }
-  
+.timesheet-description {
+    height: 150px;  /* You can adjust this value to your desired height */
+    resize: vertical;  /* Allows users to resize the textarea vertically */
+}
+.fc-day {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.fc-day:hover {
+    background-color: #f0f8ff; /* Light blue highlight */
+  }

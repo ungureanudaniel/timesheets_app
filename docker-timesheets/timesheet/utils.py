@@ -1,6 +1,8 @@
 # calendarapp/utils.py
 from calendar import HTMLCalendar
-from .models import Event
+from .models import Event, Activity
+import openpyxl
+
 
 
 class Calendar(HTMLCalendar):
@@ -43,3 +45,27 @@ class Calendar(HTMLCalendar):
         for week in self.monthdays2calendar(self.year, self.month):
             cal += f"{self.formatweek(week, events)}\n"
         return cal
+def import_activities_from_excel(file_path):
+    # Load the workbook
+    workbook = openpyxl.load_workbook(file_path)
+    sheet = workbook.active
+
+    # Iterate through the rows in the sheet
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        activity_code = row[0]
+        activity_description = row[1]
+
+        # Create a new Activity object
+        activity = Activity(
+            code=activity_code,
+            name=activity_description,
+        )
+        activity.save()
+        # You can also add any other fields you have in your Activity model
+        # For example, if you have a field for the activity type:
+        # activity.activity_type = row[2]
+        # activity.save()
+    # Close the workbook
+    workbook.close()
+    # Optionally, you can return the number of activities imported
+    return f"Imported {sheet.max_row - 1} activities from {file_path}"

@@ -48,10 +48,11 @@ class TimesheetCalendarView(LoginRequiredMixin, generic.View):
     def get(self, request):
         user = request.user
         calendar_events = get_user_timesheets(user)  # Use the helper function
-
+        form = TimesheetForm()  # Create an empty form for the modal
         # Convert the event data to JSON format for the template
         context = {
-            "calendar_events": json.dumps(calendar_events)  # Pass JSON directly to the template
+            "calendar_events": json.dumps(calendar_events),  # Pass JSON directly to the template
+            "form": form,  # Pass form to the template
         }
 
         return render(request, "timesheet/timesheets_list.html", context)
@@ -106,25 +107,28 @@ class GetTimesheetsView(LoginRequiredMixin, generic.View):
 #     }
 #     return render(request, template, context)
 # new timesheet
+@login_required
 def create_timesheet(request):
     template = "modals/create_timesheets.html"
-    # get current year and month
-
+    
     if request.method == 'POST':
         form = TimesheetForm(request.POST)
         if form.is_valid():
-            new_timesheet = form.save(commit=False)
-            new_timesheet.user = request.user
-            new_timesheet.save()
-            messages.success(request, _('Timesheet created successfully!'))
-            return redirect('timesheet_list')
+            try:
+                new_timesheet = form.save(commit=False)
+                new_timesheet.user = request.user
+                new_timesheet.save()
+                messages.success(request, _('Timesheet created successfully!'))
+                return redirect('timesheet_list')
+            except Exception as e:
+                messages.error(request, _('Error saving timesheet: ') + str(e))
         else:
-            messages.success(request, _('Please make sure you filled the fields correctly!'))
+            print("Form errors:", form.errors)  # Debugging
+            messages.error(request, _('Please correct the errors below.'))
     else:
         form = TimesheetForm()
-    context = {
-        'form': form,
-    }
+    
+    context = {'form': form}
     return render(request, template, context)
 # timesheet update view
 class UpdateTimesheetView(LoginRequiredMixin, generic.View):

@@ -16,7 +16,12 @@ def analytics(request):
 
     context = {}
     return render(request, template, context)
+# the activities view for the admin/manager.
+def pal_activities(request):
+    template = "dashboard/pal.html"
 
+    context = {}
+    return render(request, template, context)
 def activity_program(request):
     template = "activities/activity-program.html"
 
