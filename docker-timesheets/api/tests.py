@@ -14,7 +14,7 @@ class MonthlyReportAPITests(APITestCase):
 
         # create sample data
         self.report = MonthlyReport.objects.create(
-            user=self.user,
+            user=self.new_user,
             activity="1.2.3",
-            description ="This is a test activity",
+            description="This is a test activity",
         )

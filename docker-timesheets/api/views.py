@@ -6,12 +6,29 @@ from rest_framework.pagination import PageNumberPagination
 from reports.models import MonthlyReport
 from .serializers import MonthlyReportSerializer
 
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.user == request.user
+
+
 class MonthlyReportPagination(PageNumberPagination):
+    """
+    Custom pagination class for Monthly
+    """
     page_size = 10  # Customize page size
     page_size_query_param = 'page_size'
     max_page_size = 100
 
 class MonthlyReportCreateView(generics.CreateAPIView):
+    """
+    This class handles the creation of MonthlyReport instances.
+    """
     queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -19,6 +36,9 @@ class MonthlyReportCreateView(generics.CreateAPIView):
 
 
 class MonthlyReportListView(generics.ListAPIView):
+    """
+    This class handles the listing of MonthlyReport instances.
+    """
     queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
     http_method_names = ['get']
@@ -34,14 +54,11 @@ class MonthlyReportListView(generics.ListAPIView):
 
 
 class MonthlyReportDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    This class handles the retrieval, update, and deletion of a MonthlyReport instance.
+    """
     queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get', 'put', 'delete']
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.user == request.user
