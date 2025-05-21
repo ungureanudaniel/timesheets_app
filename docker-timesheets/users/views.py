@@ -34,6 +34,7 @@ def admin_dashboard(request):
     # Your logic for the admin dashboard
     return render(request, 'admin/dashboard.html')
 
+
 # ==============user list============
 class AnalyticsView(generic.ListView):
     template = "dashboard/analytics.html"
@@ -46,6 +47,7 @@ class AnalyticsView(generic.ListView):
         user_profile = self.request.user.customuser
         print(user_profile) # do some debugging here to make sure that there is indeed a userprofile in your db.
 
+
 # ==============user list============
 class UserListView(generic.ListView):
     template = "account/user_management.html"
@@ -57,6 +59,7 @@ class UserListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["users"] = CustomUser.objects.all()
         return context
+
 
 # ==============user registration view============
 class CustomSignupView(SignupView):
