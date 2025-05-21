@@ -14,16 +14,10 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page
 from calendar import monthrange
-from django.utils import timezone
-from datetime import datetime, timedelta
+# from django.utils import timezone
+# from datetime import datetime, timedelta
 import calendar
-from calendar import HTMLCalendar
-
-# =============new timesheets view======
-# @login_required
-# def create_timesheet(request):
-
-#     return render(request, template, context)
+# from calendar import HTMLCalendar
 
 
 # =============helper function to fetch timesheet data======
@@ -43,6 +37,8 @@ def get_user_timesheets(user):
         calendar_events.append(timesheet_event)
 
     return calendar_events
+
+
 # serializer and renderer for the timesheet list view
 class TimesheetCalendarView(LoginRequiredMixin, generic.View):
     def get(self, request):
@@ -56,6 +52,8 @@ class TimesheetCalendarView(LoginRequiredMixin, generic.View):
         }
 
         return render(request, "timesheet/timesheets_list.html", context)
+
+
 # this function uses the helper function to retrieve timesheet data and communicates with Ajax module in main.js
 class GetTimesheetsView(LoginRequiredMixin, generic.View):
     def get(self, request):
@@ -106,6 +104,8 @@ class GetTimesheetsView(LoginRequiredMixin, generic.View):
 #         'months': months
 #     }
 #     return render(request, template, context)
+
+
 # new timesheet
 @login_required
 def create_timesheet(request):
@@ -130,6 +130,8 @@ def create_timesheet(request):
     
     context = {'form': form}
     return render(request, template, context)
+
+
 # timesheet update view
 class UpdateTimesheetView(LoginRequiredMixin, generic.View):
     def post(self, request):
@@ -150,6 +152,8 @@ class UpdateTimesheetView(LoginRequiredMixin, generic.View):
         except Timesheet.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Timesheet not found.'}, status=404)
 # timesheet delete view
+
+
 class DeleteTimesheetView(LoginRequiredMixin, generic.View):
     def post(self, request):
         timesheet_id = request.POST.get('id')
@@ -162,3 +166,4 @@ class DeleteTimesheetView(LoginRequiredMixin, generic.View):
             return JsonResponse({'status': 'success', 'message': 'Timesheet deleted successfully.'})
         except Timesheet.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Timesheet not found.'}, status=404)
+

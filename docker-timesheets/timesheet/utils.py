@@ -4,15 +4,13 @@ from .models import Event, Activity
 import openpyxl
 
 
-
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None):
         self.year = year
         self.month = month
         super(Calendar, self).__init__()
 
-    # formats a day as a td
-    # filter events by day
+    # formats a day as a td filter events by day
     def formatday(self, day, events):
         events_per_day = events.filter(start_time__day=day)
         d = ""
@@ -45,6 +43,8 @@ class Calendar(HTMLCalendar):
         for week in self.monthdays2calendar(self.year, self.month):
             cal += f"{self.formatweek(week, events)}\n"
         return cal
+
+
 def import_activities_from_excel(file_path):
     # Load the workbook
     workbook = openpyxl.load_workbook(file_path)

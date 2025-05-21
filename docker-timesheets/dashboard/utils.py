@@ -20,6 +20,6 @@ def upload_activities(request):
 
             messages.success(request, "Activities uploaded successfully.")
         except Exception as e:
-            messages.error(request, f"Error processing file: {e}")        
+            messages.error(request, f"Error processing file: {e}")
         return redirect('upload_activities')
     return render(request, 'pal.html')  # Replace with your actual template

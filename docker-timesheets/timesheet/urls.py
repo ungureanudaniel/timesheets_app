@@ -11,7 +11,6 @@ urlpatterns = [
     path('create_timesheet/', create_timesheet, name='create_timesheet'),
     path('update_timesheet/', UpdateTimesheetView.as_view(), name='update_timesheet'),
     path('remove_timesheet/', DeleteTimesheetView.as_view(), name='remove_timesheet'),
-    
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
