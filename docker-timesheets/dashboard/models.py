@@ -1,6 +1,7 @@
 from django.db import models
 import datetime as dt
 
+
 class ActivityProgram(models.Model):
     user = models.CharField(max_length=300)
     registration_nr = models.IntegerField()
