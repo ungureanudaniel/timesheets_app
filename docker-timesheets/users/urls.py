@@ -15,7 +15,6 @@ urlpatterns = [
     path('profile/<str:username>/change_username/', user_change_view, name='credentials_change'),
     path('password/<str:username>/change_password/', password_change_view, name='password_change'),
     path('profile/<str:username>/delete/', ProfileEditView.as_view(), name='user_delete'),
-    
     # path('inactive-profile/', profile, name='awaiting-approval'),
     path('login/', CustomLoginView.as_view(), name='login'),  # Custom LoginView
     path('logout/', LogoutView.as_view(next_page=''), name='logout'),

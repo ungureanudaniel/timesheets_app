@@ -24,9 +24,11 @@ from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from allauth.account.views import SignupView
 
+
 # Function to check if the user is admin
 def is_admin(user):
     return user.is_staff or user.is_superuser
+
 
 # Protect the admin dashboard view
 @user_passes_test(is_admin)
@@ -41,11 +43,11 @@ class AnalyticsView(generic.ListView):
 
     queryset = CustomUser.objects.all()
     paginate_by = 20
-
+    
     def get(self, request, **kwargs):
-        # get each individual userprofile 
+        # get each individual userprofile
         user_profile = self.request.user.customuser
-        print(user_profile) # do some debugging here to make sure that there is indeed a userprofile in your db.
+        print(user_profile)  # do some debugging here to make sure that there is indeed a userprofile in your db.
 
 
 # ==============user list============

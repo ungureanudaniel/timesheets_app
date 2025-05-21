@@ -128,5 +128,4 @@ class ProfileChangeForm(forms.ModelForm):
             if commit:
                 user_profile.save()
             return user_profile
-    bio = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=False)  # Define bio with Textarea widget
-    
+        bio = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=False)  # Define bio with Textarea widget

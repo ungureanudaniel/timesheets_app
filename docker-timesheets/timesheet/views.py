@@ -9,14 +9,12 @@ from .forms import TimesheetForm
 from .models import Timesheet, Activity
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-import calendar
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page
 from calendar import monthrange
 # from django.utils import timezone
 # from datetime import datetime, timedelta
-import calendar
 # from calendar import HTMLCalendar
 
 
@@ -166,4 +164,3 @@ class DeleteTimesheetView(LoginRequiredMixin, generic.View):
             return JsonResponse({'status': 'success', 'message': 'Timesheet deleted successfully.'})
         except Timesheet.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Timesheet not found.'}, status=404)
-
