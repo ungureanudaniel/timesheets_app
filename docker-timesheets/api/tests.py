@@ -7,14 +7,33 @@ from reports.models import MonthlyReport
 
 class MonthlyReportAPITests(APITestCase):
     def setUp(self):
-        # i create the test user here
-        self.new_user = User.objects.create_user(username='test_user1', password='testpassword123')
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.new_user)
-
-        # create sample data
-        self.report = MonthlyReport.objects.create(
-            user=self.new_user,
-            activity="1.2.3",
-            description="This is a test activity",
+        # Create test users
+        self.user = CustomUser.objects.create_user(
+            email='user@test.com',
+            password='testpass123',
+            username='testuser'
         )
+        self.other_user = CustomUser.objects.create_user(
+            email='other@test.com',
+            password='testpass123',
+            username='otheruser'
+        )
+        
+        # Create test activity
+        self.activity = Activity.objects.create(
+            name='Development',
+            code='DEV'
+        )
+        
+        # Create test report
+        self.report = MonthlyReport.objects.create(
+            user=self.user,
+            activity=self.activity,
+            description='API Development',
+            timeframe='January 2023',
+            date='2023-01-15',
+            hours=decimal.Decimal('8.50')
+        )
+        
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)

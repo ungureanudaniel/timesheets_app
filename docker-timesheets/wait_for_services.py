@@ -23,7 +23,7 @@ def get_db_config():
         "dbname": os.environ.get("POSTGRES_DB"),
         "user": os.environ.get("POSTGRES_USER"),
         "password": os.environ.get("POSTGRES_PASSWORD"),
-        "host": os.environ.get("POSTGRES_HOST", "localhost"),  # Default to localhost
+        "host": os.environ.get("POSTGRES_HOST", "db"),  # Default to localhost
         "port": int(os.environ.get("POSTGRES_PORT", 5432)),     # Default to 5432
         "sslmode": os.environ.get("POSTGRES_SSLMODE", "disable"),  # Default to 'disable'
     }

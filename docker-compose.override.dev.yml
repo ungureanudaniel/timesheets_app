@@ -11,4 +11,10 @@ services:
     volumes:
       - ./:/app  # Live code reload
     command: python manage.py runserver 0.0.0.0:8000
+  db:
+    image: postgres:15
+    env_file:
+      - .env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
 
