@@ -54,17 +54,17 @@ timesheets/ ├── accounts/ # App for user authentication and profiles ├�
   ```bash 
    docker-compose up --build
 
-2. **Create the superuser (admin):**:
+3. **Create the superuser (admin):**:
   ```bash 
    docker-compose exec web python manage.py createsuperuser
 
-2. **Access the application**:
+4. **Access the application**:
 
 Open your web browser and go to http://localhost:8000.
 
-2. **Clone the repository**:
+5. **Close the container**:
   ```bash 
-   git clone https://github.com/ungureanudaniel/timesheets_app.git
+   docker-compose down -v
 
 ### Additional Notes
 
