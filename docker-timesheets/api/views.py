@@ -1,10 +1,17 @@
 from django.shortcuts import render
-# api imports
-from rest_framework import generics, permissions
-from rest_framework.filters import SearchFilter, OrderingFilter
+from django.db.models import Q
+# API IMPORTS
+from rest_framework.response import Response
+from rest_framework import generics, permissions, status
+from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
+# MODEL IMPORTS
 from reports.models import MonthlyReport
+# SERIALIZER IMPORTS
 from .serializers import MonthlyReportSerializer
+# CACHING
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -30,36 +37,70 @@ class MonthlyReportCreateView(generics.CreateAPIView):
     """
     This class handles the creation of MonthlyReport instances.
     """
-    queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['post']
+
+    def perform_create(self, serializer):
+        """Auto-assign user"""
+        serializer.save(user=self.request.user)
+        # Consider adding audit logging here
 
 
+@method_decorator(cache_page(60*15), name='dispatch')
 class MonthlyReportListView(generics.ListAPIView):
     """
     This class handles the listing of MonthlyReport instances.
     """
-    queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
-    http_method_names = ['get']
-    filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['user__username', 'month']
-    ordering_fields = ['created_at', 'updated_at']
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]  # Added
+    search_fields = ['user__username', 'month', 'status']
+    ordering_fields = ['created_at', 'updated_at', 'month']
+    filterset_fields = ['status', 'user']  # New filtering capability
     pagination_class = MonthlyReportPagination
 
     def get_queryset(self):
+        """
+        Returns:
+        - All reports for admin users
+        - Own reports + team reports for managers
+        - Only own reports for regular users
+        """
         user = self.request.user
-        # return MonthlyReport.objects.filter(user=user)
-        return MonthlyReport.objects.select_related('user').all()
+        queryset = MonthlyReport.objects.select_related('user')
+        if user.is_superuser:
+            return queryset
+        elif user.groups.filter(name='Managers').exists():
+            return queryset.filter(
+                Q(user=user) | 
+                Q(user__teams__in=user.managed_teams.all())
+            )
+        return queryset.filter(user=user)
 
 
 class MonthlyReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     This class handles the retrieval, update, and deletion of a MonthlyReport instance.
     """
-    queryset = MonthlyReport.objects.all()
     serializer_class = MonthlyReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'put', 'delete']
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    lookup_field = 'pk'  # Explicit is better than implicit
+
+
+    def get_queryset(self):
+        """The same filtering logic as list view"""
+        return MonthlyReportListView.get_queryset(self)
+    
+
+    def perform_update(self, serializer):
+        """Change tracking"""
+        instance = serializer.save()
+        # Add your change logging logic here
+        # Example: create_audit_log(instance, self.request.user)
+
+
+    def destroy(self, request, *args, **kwargs):
+        """Soft delete implementation"""
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

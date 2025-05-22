@@ -1,7 +1,9 @@
 services:
   web:
     build:
-      dockerfile: Dockerfile.dev
+      context: ./docker-timesheets
+      dockerfile: Dockerfile
+    entrypoint: /usr/src/docker-timesheets/entrypoint.sh
     env_file:
       - .env.dev
     ports:
@@ -10,8 +12,3 @@ services:
       - ./:/app  # Live code reload
     command: python manage.py runserver 0.0.0.0:8000
 
-  db:
-    env_file:
-      - .env.dev.db
-    environment:
-      POSTGRES_PASSWORD: devpassword

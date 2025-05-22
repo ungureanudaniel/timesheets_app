@@ -64,7 +64,7 @@ Open your web browser and go to http://localhost:8000.
 
 2. **Clone the repository**:
   ```bash 
-   docker-compose down
+   git clone https://github.com/ungureanudaniel/timesheets_app.git
 
 ### Additional Notes
 
