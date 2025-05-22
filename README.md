@@ -50,7 +50,8 @@ timesheets/ ├── accounts/ # App for user authentication and profiles ├�
   git clone https://github.com/ungureanudaniel/timesheets.git
   cd timesheets
 
-2. **Build and start the containers**:
+2. **Build and start the containers:**
+
   ```bash
   docker-compose up --build -d
 
@@ -60,11 +61,11 @@ timesheets/ ├── accounts/ # App for user authentication and profiles ├�
 
 4. **Access the application**:
 
-  Open your web browser and go to http://localhost:8000.
+Open your web browser and go to http://localhost:8000.
 
 5. **Close the container**:
-  ```bash 
-  docker-compose down -v
+```bash 
+docker-compose down -v
 
 ### Additional Notes
 
