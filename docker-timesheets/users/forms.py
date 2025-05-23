@@ -123,6 +123,7 @@ class ProfileChangeForm(forms.ModelForm):
                 'accept': '.pdf',
                 'placeholder': _('Attach a new resume'),
             })
+
         def save(self, commit=True):
             user_profile = super().save(commit=False)
             if commit:

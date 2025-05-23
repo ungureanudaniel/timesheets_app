@@ -126,12 +126,12 @@ WSGI_APPLICATION = 'timesheets_main.wsgi.application'
 
 # DATABASES = {
 #   'default': {
-        # "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        # "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / "db.sqlite3"),
-        # "USER": os.environ.get("POSTGRES_USER", "user"),
-        # "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-        # "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        # "PORT": os.environ.get("POSTGRES_PORT", "5432"), 
+#       "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+#       "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / "db.sqlite3"),
+#       "USER": os.environ.get("POSTGRES_USER", "user"),
+#       "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
+#       "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+#       "PORT": os.environ.get("POSTGRES_PORT", "5432"),
 #   }
 # }
 DATABASES = {

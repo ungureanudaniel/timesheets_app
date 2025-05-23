@@ -43,7 +43,7 @@ class AnalyticsView(generic.ListView):
 
     queryset = CustomUser.objects.all()
     paginate_by = 20
-    
+
     def get(self, request, **kwargs):
         # get each individual userprofile
         user_profile = self.request.user.customuser
@@ -66,7 +66,7 @@ class UserListView(generic.ListView):
 # ==============user registration view============
 class CustomSignupView(SignupView):
     template = 'account/signup.html'
-    
+
     def form_valid(self, form):
         # Call the original form_valid method
         response = super().form_valid(form)
