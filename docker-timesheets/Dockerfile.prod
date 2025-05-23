@@ -78,4 +78,11 @@ HEALTHCHECK --interval=30s --timeout=30s \
 
 # Runtime
 ENTRYPOINT ["./entrypoint.prod.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "docker_timesheets.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", 
+     "--workers", "4",                     # Typically 2-4 x CPU cores
+     "--threads", "2",                     # For I/O-bound apps
+     "--timeout", "30",                    # Prevent zombie workers
+     "--max-requests", "1000",             # Graceful worker recycling
+     "--max-requests-jitter", "50",        # Prevent thundering herd
+     "--worker-class", "gthread",          # Better for async
+     "docker_timesheets.wsgi:application"]
