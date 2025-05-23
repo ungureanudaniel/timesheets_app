@@ -37,4 +37,3 @@ class MonthlyReportAPITests(APITestCase):
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
-
