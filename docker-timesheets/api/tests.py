@@ -1,19 +1,19 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Activity
 from reports.models import MonthlyReport
 
 
 class MonthlyReportAPITests(APITestCase):
     def setUp(self):
         # Create test users
-        self.user = CustomUser.objects.create_user(
+        self.user = User.objects.create_user(
             email='user@test.com',
             password='testpass123',
             username='testuser'
         )
-        self.other_user = CustomUser.objects.create_user(
+        self.other_user = User.objects.create_user(
             email='other@test.com',
             password='testpass123',
             username='otheruser'
