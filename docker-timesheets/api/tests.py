@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.contrib.auth.models import User, Activity
 from reports.models import MonthlyReport
+from decimal import Decimal
 
 
 class MonthlyReportAPITests(APITestCase):
@@ -18,13 +19,13 @@ class MonthlyReportAPITests(APITestCase):
             password='testpass123',
             username='otheruser'
         )
-        
+
         # Create test activity
         self.activity = Activity.objects.create(
             name='Development',
             code='DEV'
         )
-        
+
         # Create test report
         self.report = MonthlyReport.objects.create(
             user=self.user,
@@ -32,8 +33,8 @@ class MonthlyReportAPITests(APITestCase):
             description='API Development',
             timeframe='January 2023',
             date='2023-01-15',
-            hours=decimal.Decimal('8.50')
+            hours=Decimal('8.50')
         )
-        
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+

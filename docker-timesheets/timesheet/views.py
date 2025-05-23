@@ -108,7 +108,7 @@ class GetTimesheetsView(LoginRequiredMixin, generic.View):
 @login_required
 def create_timesheet(request):
     template = "modals/create_timesheets.html"
-    
+
     if request.method == 'POST':
         form = TimesheetForm(request.POST)
         if form.is_valid():
@@ -125,13 +125,16 @@ def create_timesheet(request):
             messages.error(request, _('Please correct the errors below.'))
     else:
         form = TimesheetForm()
-    
+
     context = {'form': form}
     return render(request, template, context)
 
 
 # timesheet update view
 class UpdateTimesheetView(LoginRequiredMixin, generic.View):
+    """
+    This class handles the update of a Timesheet instance.
+    """
     def post(self, request):
         timesheet_id = request.POST.get('id')
         title = request.POST.get('title')
@@ -149,10 +152,12 @@ class UpdateTimesheetView(LoginRequiredMixin, generic.View):
             return JsonResponse({'status': 'success', 'message': 'Timesheet updated successfully.'})
         except Timesheet.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Timesheet not found.'}, status=404)
-# timesheet delete view
 
 
 class DeleteTimesheetView(LoginRequiredMixin, generic.View):
+    """
+    This class handles the deletion of a Timesheet instance.
+    """
     def post(self, request):
         timesheet_id = request.POST.get('id')
 

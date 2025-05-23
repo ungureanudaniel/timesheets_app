@@ -46,7 +46,7 @@ class MonthlyReportCreateView(generics.CreateAPIView):
         # Consider adding audit logging here
 
 
-@method_decorator(cache_page(60*15), name='dispatch')
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MonthlyReportListView(generics.ListAPIView):
     """
     This class handles the listing of MonthlyReport instances.
@@ -71,8 +71,7 @@ class MonthlyReportListView(generics.ListAPIView):
             return queryset
         elif user.groups.filter(name='Managers').exists():
             return queryset.filter(
-                Q(user=user) | 
-                Q(user__teams__in=user.managed_teams.all())
+                Q(user=user) | Q(user__teams__in=user.managed_teams.all())
             )
         return queryset.filter(user=user)
 
@@ -85,18 +84,15 @@ class MonthlyReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = 'pk'  # Explicit is better than implicit
 
-
     def get_queryset(self):
         """The same filtering logic as list view"""
         return MonthlyReportListView.get_queryset(self)
-    
 
     def perform_update(self, serializer):
         """Change tracking"""
         instance = serializer.save()
         # Add your change logging logic here
         # Example: create_audit_log(instance, self.request.user)
-
 
     def destroy(self, request, *args, **kwargs):
         """Soft delete implementation"""
