@@ -20,15 +20,25 @@ RUN apt-get update && \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install linting and dependencies
+# Upgrade pip
 RUN pip install --upgrade pip
-RUN pip install flake8==6.0.0
-COPY . .
-RUN flake8 --ignore=E501,F401,F403,F405,F841 .
 
-# Create wheels
-COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/docker-timesheets/wheels -r requirements.txt
+# Create and use a builder user
+RUN useradd -m builder && \
+    chown builder:builder /usr/src/app
+USER builder
+
+# Install dependencies in user space
+RUN pip install --user --no-warn-script-location \
+    flake8==6.0.0 \
+    wheel
+
+# Copy requirements and install
+COPY --chown=builder:builder . .
+
+# Lint and build wheels
+RUN python -m flake8 --ignore=E501,F401,F403,F405,F841 .
+RUN python -m pip wheel --no-cache-dir --no-deps --wheel-dir=/usr/src/app/wheels -r requirements.txt
 
 #########
 # FINAL #
@@ -37,8 +47,8 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/docker-timesheets/wh
 FROM python:3.12-slim-bookworm
 
 # Create and configure app user
-RUN addgroup --system daniel && \
-    adduser --system --ingroup daniel daniel
+RUN addgroup --system timesheetsadmin && \
+    adduser --system --ingroup timesheetsadmin timesheetsadmin
 
 # Set up directories
 ENV APP_HOME=/home/docker-timesheets/web
@@ -57,7 +67,7 @@ RUN pip install --no-cache /wheels/* && \
 COPY . .
 
 # Set permissions
-RUN chown -R daniel:daniel $APP_HOME && \
+RUN chown -R timesheetsadmin:timesheetsadmin $APP_HOME && \
     chmod -R 755 $APP_HOME/staticfiles $APP_HOME/mediafiles
 
 # Entrypoint setup
@@ -66,7 +76,7 @@ RUN sed -i 's/\r$//g' entrypoint.prod.sh && \
     chmod +x entrypoint.prod.sh
 
 # Switch to non-root user
-USER daniel
+USER timesheetsadmin
 
 # Runtime configuration
 ENTRYPOINT ["/home/docker-timesheets/web/entrypoint.prod.sh"]
