@@ -1,17 +1,14 @@
 ###########
 # BUILDER #
 ###########
-
-# Use Python 3.12 for both stages
 FROM python:3.12-slim-bookworm as builder
 
-# Create directory and set permissions first
-RUN mkdir -p /usr/src/docker_timesheets && \
+# Set work directory and create with correct permissions first
+RUN mkdir -p /usr/src/app && \
     useradd -m builder && \
-    chown builder:builder /usr/src/docker_timesheets
+    chown builder:builder /usr/src/app
 
-# Set work directory
-WORKDIR /usr/src/docker_timesheets
+WORKDIR /usr/src/app
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -25,64 +22,50 @@ RUN apt-get update && \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# Create and use a builder user
-RUN useradd -m builder && \
-    chown builder:builder /usr/src/docker_timesheets
+# Switch to builder user
 USER builder
 
-# Install dependencies in user space
+# Install Python tools
 RUN pip install --user --no-warn-script-location \
     flake8==6.0.0 \
     wheel
 
-# Copy requirements and install
+# Copy and build
 COPY --chown=builder:builder . .
 
 # Lint and build wheels
 RUN python -m flake8 --ignore=E501,F401,F403,F405,F841 .
-RUN python -m pip wheel --no-cache-dir --no-deps --wheel-dir=/usr/src/docker_timesheets/wheels -r requirements.txt
+RUN python -m pip wheel --no-cache-dir --no-deps --wheel-dir=/usr/src/app/wheels -r requirements.txt
 
 #########
 # FINAL #
 #########
-
 FROM python:3.12-slim-bookworm
 
-# Create and configure app user
-RUN addgroup --system timesheetsadmin && \
-    adduser --system --ingroup timesheetsadmin timesheetsadmin
+# Create app user and directories
+RUN useradd -m appuser && \
+    mkdir -p /app/{staticfiles,mediafiles} && \
+    chown -R appuser:appuser /app
 
-# Set up directories
-ENV APP_HOME=/home/docker-timesheets/web
-RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles
-WORKDIR $APP_HOME
+WORKDIR /app
+USER appuser
 
 # Copy from builder
-COPY --from=builder /usr/src/docker-timesheets/wheels /wheels
-COPY --from=builder /usr/src/docker-timesheets/requirements.txt .
+COPY --from=builder --chown=appuser:appuser /usr/src/app/wheels /tmp/wheels
+COPY --from=builder --chown=appuser:appuser /usr/src/app/requirements.txt .
 
 # Install dependencies
-RUN pip install --no-cache /wheels/* && \
-    rm -rf /wheels
+RUN pip install --no-cache-dir --no-warn-script-location --user /tmp/wheels/* && \
+    rm -rf /tmp/wheels
 
-# Copy project files
-COPY . .
+# Copy application
+COPY --chown=appuser:appuser . .
 
-# Set permissions
-RUN chown -R timesheetsadmin:timesheetsadmin $APP_HOME && \
-    chmod -R 755 $APP_HOME/staticfiles $APP_HOME/mediafiles
-
-# Entrypoint setup
-COPY ./entrypoint.prod.sh .
+# Entrypoint
+COPY --chown=appuser:appuser entrypoint.prod.sh .
 RUN sed -i 's/\r$//g' entrypoint.prod.sh && \
     chmod +x entrypoint.prod.sh
 
-# Switch to non-root user
-USER timesheetsadmin
-
-# Runtime configuration
-ENTRYPOINT ["/home/docker-timesheets/web/entrypoint.prod.sh"]
+# Runtime
+ENTRYPOINT ["./entrypoint.prod.sh"]
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "docker_timesheets.wsgi:application"]
