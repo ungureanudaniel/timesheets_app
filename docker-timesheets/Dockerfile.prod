@@ -25,6 +25,9 @@ RUN apt-get update && \
 # Switch to builder user
 USER builder
 
+# Upgrade pip first in user space
+RUN python -m pip install --user --no-warn-script-location --upgrade pip
+
 # Install Python tools
 RUN pip install --user --no-warn-script-location \
     flake8==6.0.0 \
@@ -50,6 +53,9 @@ RUN useradd -m appuser && \
 WORKDIR /app
 USER appuser
 
+# Upgrade pip in final image
+RUN python -m pip install --user --no-warn-script-location --upgrade pip
+
 # Copy from builder
 COPY --from=builder --chown=appuser:appuser /usr/src/app/wheels /tmp/wheels
 COPY --from=builder --chown=appuser:appuser /usr/src/app/requirements.txt .
@@ -65,6 +71,10 @@ COPY --chown=appuser:appuser . .
 COPY --chown=appuser:appuser entrypoint.prod.sh .
 RUN sed -i 's/\r$//g' entrypoint.prod.sh && \
     chmod +x entrypoint.prod.sh
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=30s \
+    CMD curl -f http://localhost:8000/health/ || exit 1
 
 # Runtime
 ENTRYPOINT ["./entrypoint.prod.sh"]
