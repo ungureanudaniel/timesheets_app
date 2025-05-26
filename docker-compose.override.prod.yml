@@ -6,8 +6,11 @@ services:
       - .env.prod
     ports:
       - "8000:8000"
-    command: gunicorn timesheets_main.wsgi:application --bind 0.0.0.0:8000 --workers 3
-
-  db:
-    env_file:
-      - .env.prod.db
+    command: >
+      gunicorn timesheets_main.wsgi:application
+      --bind 0.0.0.0:8000
+      --workers $$GUNICORN_WORKERS
+      --threads $$GUNICORN_THREADS
+      --timeout 30
+      --max-requests 1000
+      --worker-class gthread
