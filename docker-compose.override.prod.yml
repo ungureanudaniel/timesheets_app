@@ -6,6 +6,9 @@ services:
       - .env.prod
     ports:
       - "${DOCKER_WEB_PORT:-8000}:8000"  # Configurable port
+    volumes:
+      - /srv/nginx-ssl/yourdomain.crt:/etc/nginx/certs/yourdomain.crt:ro
+      - /srv/nginx-ssl/yourdomain.key:/etc/nginx/certs/yourdomain.key:ro
     command: >
       gunicorn timesheets_main.wsgi:application
       --bind 0.0.0.0:8000
@@ -23,3 +26,4 @@ services:
         limits:
           cpus: '2'  # CPU limits
           memory: 2G  # Memory limits
+
