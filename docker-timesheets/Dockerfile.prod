@@ -67,11 +67,9 @@ RUN pip install --no-cache-dir --no-warn-script-location --user /tmp/wheels/* &&
 # Copy application
 COPY --chown=appuser:appuser . .
 
-# Copy wait_for_services script
-COPY --chown=appuser:appuser docker-timesheets/wait_for_services.py .
-
-# Entrypoint
-COPY --chown=appuser:appuser docker-timesheets/entrypoint.prod.sh .
+# Copy entrypoint.prod.sh and wait_for_services script
+COPY --chown=appuser:appuser entrypoint.prod.sh .
+COPY --chown=appuser:appuser wait_for_services.py .
 RUN sed -i 's/\r$//g' entrypoint.prod.sh && \
     chmod +x entrypoint.prod.sh
 
