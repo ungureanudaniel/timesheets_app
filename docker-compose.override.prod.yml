@@ -5,12 +5,21 @@ services:
     env_file:
       - .env.prod
     ports:
-      - "8000:8000"
+      - "${DOCKER_WEB_PORT:-8000}:8000"  # Configurable port
     command: >
       gunicorn timesheets_main.wsgi:application
       --bind 0.0.0.0:8000
-      --workers $$GUNICORN_WORKERS
-      --threads $$GUNICORN_THREADS
+      --workers $${GUNICORN_WORKERS:-4}  # Fallback to 4 workers
+      --threads $${GUNICORN_THREADS:-2}  # Fallback to 2 threads
       --timeout 30
       --max-requests 1000
+      --max-requests-jitter 50
       --worker-class gthread
+      --access-logfile -
+      --error-logfile -
+      --log-level info
+    deploy:
+      resources:
+        limits:
+          cpus: '2'  # CPU limits
+          memory: 2G  # Memory limits
