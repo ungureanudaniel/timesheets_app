@@ -3,13 +3,14 @@ services:
     build:
       context: ./docker-timesheets
       dockerfile: Dockerfile
+    working_dir: /usr/src/docker-timesheets
     entrypoint: /usr/src/docker-timesheets/entrypoint.sh
     env_file:
       - .env.dev
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app  # Live code reload
+      - ./docker-timesheets:/usr/src/docker-timesheets # Live code reload
     command: python manage.py runserver 0.0.0.0:8000
     depends_on:
       - db
@@ -19,4 +20,5 @@ services:
       - .env.dev
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-
+volumes:
+  postgres_data:

@@ -1,10 +1,11 @@
 # pull official base image
-FROM python:3.10.8-slim
+FROM python:3.12-slim-bookworm
 
 # set work directory
-WORKDIR /usr/src/docker-timesheets/
+WORKDIR /usr/src/docker-timesheets
 
 # set environment variables
+# Avoid writing `.pyc` files and enable unbuffered output
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
@@ -13,13 +14,12 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-# copy entrypoint.sh
-COPY ./entrypoint.sh .
-RUN sed -i 's/\r$//g' /usr/src/docker-timesheets/entrypoint.sh
-RUN chmod +x /usr/src/docker-timesheets/entrypoint.sh
+# Copy entrypoint script and ensure it's executable
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 # copy project
 COPY . .
 
-# run entrypoint.sh
-ENTRYPOINT ["/usr/src/docker-timesheets/entrypoint.sh"]
+# Entrypoint to wait for DB and run migrations, etc.
+ENTRYPOINT ["./entrypoint.sh"]

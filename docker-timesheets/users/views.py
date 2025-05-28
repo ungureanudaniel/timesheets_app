@@ -149,8 +149,12 @@ class CustomLoginView(LoginView):
     success_url = reverse_lazy('timesheets:dashboard')  # Redirect after login
 
     def form_valid(self, form):
-        # If you want to add any additional logic before the form is validated, you can do it here.
+        messages.success(self.request, f"Welcome back, {form.get_user().username}!") # Display a success message on successful login
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid username or password. Please try again.")
+        return super().form_invalid(form)
 
 
 # ==============user profile view============

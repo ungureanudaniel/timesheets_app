@@ -1,4 +1,8 @@
 #!/bin/bash
+# Source .env.dev from parent folder
+if [ -f ../.env.dev ]; then
+  export $(grep -v '^#' ../.env.dev | xargs)
+fi
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
@@ -9,7 +13,7 @@ function waitForServices() {
 waitForServices
 
 # Run migrations and collect static files (if necessary)
-python manage.py makemigrations timesheet general users report admin_dashboard auth
+python manage.py makemigrations timesheet general users reports dashboard auth
 python manage.py migrate
 python manage.py collectstatic --noinput
 

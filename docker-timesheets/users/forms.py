@@ -22,40 +22,6 @@ class CustomSignupForm(SignupForm):
         # You must return the original result.
         return user
 
-# class CustomUserCreationForm(UserCreationForm):
-#     class Meta(UserCreationForm.Meta):
-#         model = CustomUser
-#         fields = ('username', 'email')
-
-#         def __init__(self, *args, **kwargs):
-#             super().__init__(*args, **kwargs)
-
-#             # Apply Bootstrap classes and custom styles to form fields
-#             self.fields['username'].widget.attrs.update({
-#                 'class': 'form-control w-100',
-#                 'placeholder': _('Enter username'),
-#             })
-#             self.fields['email'].widget.attrs.update({
-#                 'class': 'form-control d-flex p-2 bd-highlight',
-#                 'placeholder': _('Enter email'),
-#             })
-#             self.fields['password1'].widget.attrs.update({
-#                 'class': 'form-control d-flex p-2 bd-highlight',
-#                 'placeholder': _('Enter password'),
-#             })
-#             self.fields['password2'].widget.attrs.update({
-#                 'class': 'form-control d-flex p-2 bd-highlight',
-#                 'placeholder': _('Confirm password'),
-#             })
-
-#         def save(self, commit=True):
-#             user = super().save(commit=False)
-#             user.is_approved = False  # Set new user as unapproved by default
-#             if commit:
-#                 user.save()
-#                 user.assign_initial_group()
-#             return user
-
 
 # ==============user update form=============
 class UsernameEmailChangeForm(UserChangeForm):

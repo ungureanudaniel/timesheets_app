@@ -1,4 +1,8 @@
 #!/bin/bash
+# Source .env.dev from parent folder
+if [ -f ../.env.dev ]; then
+  export $(grep -v '^#' ../.env.dev | xargs)
+fi
 
 function waitForServices() {
     python wait_for_services.py
