@@ -6,8 +6,8 @@ WORKDIR /usr/src/docker-timesheets
 
 # set environment variables
 # Avoid writing `.pyc` files and enable unbuffered output
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # install dependencies
 RUN pip install --upgrade pip
