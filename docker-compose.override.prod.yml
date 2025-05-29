@@ -26,4 +26,16 @@ services:
         limits:
           cpus: '2'  # CPU limits
           memory: 2G  # Memory limits
-
+nginx:
+    image: nginx:latest
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /srv/nginx-ssl/yourdomain.crt:/etc/nginx/certs/rapoarteactivitate.bucegipark.ro.crt:ro
+      - /srv/nginx-ssl/yourdomain.key:/etc/nginx/certs/rapoarteactivitate.bucegipark.ro.key:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/mediafiles:ro
+    depends_on:
+      - web
