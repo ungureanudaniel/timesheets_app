@@ -26,7 +26,7 @@ services:
         limits:
           cpus: '2'  # CPU limits
           memory: 2G  # Memory limits
-nginx:
+  nginx:
     image: nginx:latest
     ports:
       - "443:443"
