@@ -12,6 +12,10 @@ def upload_activities(request):
         try:
             wb = openpyxl.load_workbook(excel_file)
             sheet = wb.active
+            
+            if sheet is None:
+                messages.error(request, "Excel file has no sheets.")
+                return redirect('upload_activities')
 
             for row in sheet.iter_rows(min_row=2, values_only=True):  # skip header
                 code, description = row
