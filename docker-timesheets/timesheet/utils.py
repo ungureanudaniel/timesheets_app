@@ -44,7 +44,7 @@ class Calendar(HTMLCalendar):
             cal += f"{self.formatweek(week, events)}\n"
         return cal
 
-
+# Import activities from an Excel file and save them to the database
 def import_activities_from_excel(file_path):
     # Load the workbook
     workbook = openpyxl.load_workbook(file_path)
@@ -61,11 +61,7 @@ def import_activities_from_excel(file_path):
             name=activity_description,
         )
         activity.save()
-        # You can also add any other fields you have in your Activity model
-        # For example, if you have a field for the activity type:
-        # activity.activity_type = row[2]
-        # activity.save()
     # Close the workbook
     workbook.close()
-    # Optionally, you can return the number of activities imported
+    # Return the number of activities imported
     return f"Imported {sheet.max_row - 1} activities from {file_path}"
